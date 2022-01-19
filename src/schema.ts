@@ -4,53 +4,55 @@ const typeDefs = gql`
   "Entry point into the rest of the Schema, fetch all needed data from here, think multiple endpoints"
   type Query{
     "Query to get specific Hero Profile"
-    heroProfile: {
-      hero: Hero!
+    heroProfile: HeroProfile!
+  }
+
+  type HeroProfile {
+    hero: Hero!
       latestActivities: [Activity]!
       latestBattles: [Battle]!
-    }
   }
 
   "A Hero complete with currently equipped items"
   type Hero {
     id: ID!
     owner: String!
-    userId: Number!
+    userId: Int!
     createdAt: String!
     updatedAt: String!
     name: String!
     character: String!
     hasBeenUpgraded: Boolean!
     status: String!
-    statusFade: Number!
+    statusFade: Int!
     goToBattle: Boolean!
     power: Float!
     health: Float!
-    maxHealth: Number!
+    maxHealth: Int!
     fire: Float!
     earth: Float!
     air: Float!
     water: Float!
     aether: Float!
     armor: Float!
-    recovery: Number!
-    qp: Number!
-    activityXP: Number!
-    battleXP: Number!
-    photonTokens: Number!
-    battleWins: Number!
-    battleLosses: Number!
-    battleDraws: Number!
-    battleDkos: Number!
-    qpPower: Number!
-    qpHealth: Number!
-    qpFire: Number!
-    qpEarth: Number!
-    qpAir: Number!
-    qpWater: Number!
-    qpAether: Number!
-    qpArmor: Number!
-    qpRecovery: Number!
+    recovery: Int!
+    qp: Int!
+    activityXP: Int!
+    battleXP: Int!
+    photonTokens: Int!
+    battleWins: Int!
+    battleLosses: Int!
+    battleDraws: Int!
+    battleDkos: Int!
+    qpPower: Int!
+    qpHealth: Int!
+    qpFire: Int!
+    qpEarth: Int!
+    qpAir: Int!
+    qpWater: Int!
+    qpAether: Int!
+    qpArmor: Int!
+    qpRecovery: Int!
   }
 
   "An Exercise Activity in which a user has completed"
@@ -60,20 +62,20 @@ const typeDefs = gql`
     createdAt: String!
     updatedAt: String!
     activityDate: String!
-    activityId: Number!
+    activityId: Int!
     type: String!
     source: String!
-    duration: Number!
-    distance: Number
-    averageSpeed: Number
-    maxSpeed: Number
-    elevationGain: Number
+    duration: Int!
+    distance: Int
+    averageSpeed: Int
+    maxSpeed: Int
+    elevationGain: Int
   }
 
   "A Battle in which a Hero has been in"
   type Battle {
     id: ID!
-    avatarId: Number!
+    avatarId: Int!
     avatarName: String!
     owner: String!
     seenReport: Boolean!
@@ -82,9 +84,9 @@ const typeDefs = gql`
     createdAt: String!
     updatedAt: String!
     aStatus: String!
-    xpGain: Number!
-    ptGain: Number
-    scenario: Number!
+    xpGain: Int!
+    ptGain: Int
+    scenario: Int!
     effects: [String!]
     effectProcs: [EffectProc!]
     postBattleActions: [String!]
