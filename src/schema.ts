@@ -227,6 +227,15 @@ const typeDefs = gql`
   }
 
 
+  type Query {
+    profile(id: Int!): Profile!
+  }
+
+  "Profile Page"
+  type Profile {
+    hero: Hero!
+  }
+
 `;
 
-export default typeDefs
+export default typeDefs;

@@ -21,6 +21,9 @@
     // Turn off if annoying
     "useUnknownInCatchVariables": false,
     "allowUnreachableCode": true,
+    "sourceMap": true,
+    // "emitDecoratorMetadata": true,
+    // "experimentalDecorators": true
   },
   "include": ["src/**/*.ts", "src/**/*.js"],
   "exclude": ["node_modules"]

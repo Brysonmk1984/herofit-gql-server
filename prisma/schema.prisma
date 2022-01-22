@@ -1,0 +1,184 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model avatar_items {
+  avatarID  Int
+  itemID    Int
+  equipped  Boolean   @default(false)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  id        Int       @id @default(autoincrement())
+  updatedAt DateTime? @db.Timestamptz(6)
+  avatars   avatars   @relation(fields: [avatarID], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "avatar_avatar_items_fkey")
+  items     items     @relation(fields: [itemID], references: [id], onDelete: Cascade, map: "items_avatar_items_fkey")
+}
+
+model avatars {
+  id                                Int            @id(map: "pk") @default(autoincrement())
+  owner                             String         @unique @db.VarChar
+  power                             Int
+  health                            Int
+  createdAt                         DateTime       @db.Timestamptz(6)
+  updatedAt                         DateTime       @db.Timestamptz(6)
+  character                         String?        @db.VarChar(40)
+  name                              String?        @unique @db.VarChar(40)
+  hasBeenUpgraded                   Boolean        @default(false)
+  fire                              Decimal        @default(0) @db.Decimal(7, 2)
+  earth                             Decimal        @default(0) @db.Decimal(7, 2)
+  water                             Decimal        @default(0) @db.Decimal(7, 2)
+  air                               Decimal        @default(0) @db.Decimal(7, 2)
+  armor                             Decimal        @default(0) @db.Decimal(7, 2)
+  recovery                          Decimal        @default(0) @db.Decimal(7, 2)
+  activityXP                        Int            @default(0)
+  qp                                Int            @default(0)
+  battleXP                          Int            @default(0)
+  qpFire                            Int            @default(0)
+  qpEarth                           Int            @default(0)
+  qpWater                           Int            @default(0)
+  qpAir                             Int            @default(0)
+  qpRecovery                        Int            @default(0)
+  qpArmor                           Int            @default(0)
+  qpPower                           Int            @default(0)
+  isFake                            Boolean?
+  maxHealth                         Int            @default(100)
+  qpHealth                          Int            @default(0)
+  status                            String         @default("Rested") @db.VarChar(40)
+  goToBattle                        Boolean        @default(false)
+  battleWins                        Int            @default(0)
+  battleLosses                      Int            @default(0)
+  battleDraws                       Int            @default(0)
+  battleDkos                        Int            @default(0)
+  userId                            Int?
+  photonTokens                      Int            @default(0)
+  statusFade                        Int            @default(0)
+  aether                            Decimal        @default(0) @db.Decimal(7, 2)
+  qpAether                          Int            @default(0)
+  users                             users          @relation(fields: [owner], references: [email], onDelete: NoAction, onUpdate: NoAction, map: "User_Owner_fk")
+  avatarItems                       avatar_items[]
+  battles_avatarsTobattles_avatarID battles[]      @relation("avatarsTobattles_avatarID")
+  battles_avatarsTobattles_owner    battles[]      @relation("avatarsTobattles_owner")
+}
+
+model battles {
+  id                                Int      @id @default(autoincrement())
+  avatarID                          Int
+  outcome                           String   @default("Pending") @db.VarChar(15)
+  aStatus                           String?  @db.VarChar(15)
+  xpGain                            Int?
+  owner                             String   @db.VarChar(100)
+  avatarName                        String   @db.VarChar(100)
+  foe                               Json?
+  bra                               Json?
+  brf                               Json?
+  createdAt                         DateTime @db.Timestamptz(6)
+  updatedAt                         DateTime @db.Timestamptz(6)
+  scenario                          Int?
+  avatar                            Json?
+  roundBreakdown                    Json?
+  seenReport                        Boolean  @default(false)
+  postBattleActions                 Json?
+  ptGain                            Int?
+  effects                           Json?
+  foeType                           String?  @db.VarChar(50)
+  effectProcs                       Json?
+  avatars_avatarsTobattles_avatarID avatars  @relation("avatarsTobattles_avatarID", fields: [avatarID], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Avatars_id_fk")
+  avatars_avatarsTobattles_owner    avatars  @relation("avatarsTobattles_owner", fields: [owner], references: [owner], onDelete: NoAction, onUpdate: NoAction, map: "Avatars_owner_fk")
+}
+
+model items {
+  type                String         @db.VarChar(15)
+  name                String         @db.VarChar(35)
+  description         String         @db.VarChar(100)
+  lore                String?        @db.VarChar(5000)
+  icon                String?        @db.VarChar(50)
+  class               String?        @db.VarChar(50)
+  exhaustible         Boolean        @default(false)
+  ptCost              Int?
+  msCost              Int?
+  createdAt           DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime       @default(now()) @db.Timestamptz(6)
+  id                  Int            @id @default(autoincrement())
+  action              String?        @db.VarChar(25)
+  effects             Json?
+  disabled            Boolean        @default(false)
+  dropRate            Decimal?       @db.Decimal
+  levelRestriction    Int?
+  activityRestriction Json?
+  avatarItems         avatar_items[]
+}
+
+model user_activities {
+  id            Int      @id @default(autoincrement())
+  user          String   @db.VarChar(40)
+  createdAt     DateTime @db.Timestamptz(6)
+  updatedAt     DateTime @db.Timestamptz(6)
+  activityDate  DateTime @db.Timestamptz(6)
+  activityId    String   @unique(map: "unique_activity_id") @db.VarChar
+  type          String   @db.VarChar(255)
+  duration      String   @db.VarChar(255)
+  source        String   @db.VarChar(255)
+  distance      String?  @db.VarChar(255)
+  averageSpeed  String?  @db.VarChar(255)
+  maxSpeed      String?  @db.VarChar(255)
+  elevationGain String?  @db.VarChar(255)
+  users         users    @relation(fields: [user], references: [email], onDelete: Cascade, map: "Users_email_fk")
+}
+
+model user_totals {
+  id              Int      @id(map: "UserActivities_pkey") @default(autoincrement())
+  user            String   @db.VarChar(100)
+  avatarId        BigInt?
+  lastUpdate      DateTime @db.Timestamptz(6)
+  workout         Json?
+  rowing          Json?
+  standUpPaddling Json?
+  crossfit        Json?
+  elliptical      Json?
+  stairStepper    Json?
+  weightTraining  Json?
+  yoga            Json?
+  swim            Json?
+  walk            Json?
+  hike            Json?
+  run             Json?
+  ride            Json?
+  ski             Json?
+  snowboard       Json?
+  snowshoe        Json?
+  kayaking        Json?
+  users           users    @relation(fields: [user], references: [email], onDelete: Cascade)
+}
+
+model users {
+  id                          Int               @id(map: "Users_pkey") @default(autoincrement())
+  username                    String            @db.VarChar(100)
+  email                       String            @unique(map: "Users_email") @db.VarChar(100)
+  stravaAccessToken           String?           @db.Char(40)
+  stravaAccessTokenExpiration Int?
+  stravaRefreshToken          String?           @db.Char(40)
+  createdAt                   DateTime          @db.Timestamptz(6)
+  updatedAt                   DateTime          @db.Timestamptz(6)
+  latestActivityUpdate        DateTime?         @db.Timestamptz(6)
+  featurePreferenceSubmitted  Boolean?
+  firstName                   String?           @db.VarChar(40)
+  lastName                    String?           @db.VarChar(40)
+  seenLatestPatch             Boolean           @default(false)
+  isFake                      Boolean           @default(false)
+  active                      Boolean           @default(false)
+  hash                        String?           @db.VarChar(128)
+  salt                        String?           @db.VarChar(64)
+  emailCode                   String?           @db.VarChar(16)
+  dataSrcId                   String?           @unique(map: "Users_dataSrcId") @db.VarChar(50)
+  emailMarketingOptIn         Boolean           @default(true)
+  isMetric                    Boolean           @default(false)
+  foundOutBy                  String?           @db.VarChar(50)
+  referredBy                  String?           @db.VarChar(50)
+  avatars                     avatars?
+  userActivities              user_activities[]
+  userTotals                  user_totals[]
+}
