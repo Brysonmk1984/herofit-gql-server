@@ -7,19 +7,49 @@ const resolvers = {
 
   Query: {
     // Get a single profile by ID for the profile page
-    profile: (_ : {}, { id } : { id : number }, { prisma } : Context) => {
-      return prisma.avatars.findUnique({ where: { id } });
+    userProfile: (_ : {}, { email : owner } : { email : string }, { prisma } : Context) => {
+      return prisma.avatars.findUnique({ where: { owner } });
     }
 
   },
 
-  Profile: {
-    hero: ({id} : any, _ : any, { prisma } : Context) => {
+  // Only fetch userprofile for current user, need separate resolver to handle fetching others profile
+  UserProfile: {
+    hero: (_ : any, { email : owner } : any, { prisma } : Context) => {
       return prisma.avatars.findUnique({
-        where: { id }
+        where: { owner }
+      });
+    },
+    user: (_: any, { email } : any, { prisma } : Context  ) => {
+      return prisma.users.findUnique({
+        where: { email }
+      });
+    },
+    userTotals: (_ : any, { email : user } : any, { prisma } : Context  ) => {
+      return prisma.userTotals.findFirst({
+        where: { user }
+      });
+    },
+    latestActivities: (_ : any, { email : user } : any, { prisma } : Context  ) => {
+      return prisma.userActivities.findMany({
+        where: { user },
+        take: 10,
+        orderBy: {
+          activityDate: 'desc'
+        }
+      });
+    },
+    latestBattles: (_: any, { email : owner } : any, { prisma } : Context  ) => {
+      return prisma.battles.findMany({
+        where: { owner },
+        take: 50,
+        orderBy: {
+          createdAt: 'desc'
+        }
       });
     }
-  }
+  },
+
 
 };
 

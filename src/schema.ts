@@ -1,16 +1,17 @@
 import { gql } from 'apollo-server';
-
 const typeDefs = gql`
   "Entry point into the rest of the Schema, fetch all needed data from here, think multiple endpoints"
-  type Query{
-    "Query to get specific Hero Profile"
-    heroProfile: HeroProfile!
+  type Query {
+    userProfile(email: String!): UserProfile!
   }
 
-  type HeroProfile {
-    hero: Hero!
-      latestActivities: [Activity]!
-      latestBattles: [Battle]!
+  "Profile Page"
+  type UserProfile {
+    hero(email: String!): Hero!
+    latestActivities(email: String!): [Activity]!
+    latestBattles(email: String!): [Battle]!
+    userTotals(email: String!): UserTotal
+    user(email: String!): User
   }
 
   "A Hero complete with currently equipped items"
@@ -62,7 +63,7 @@ const typeDefs = gql`
     createdAt: String!
     updatedAt: String!
     activityDate: String!
-    activityId: Int!
+    activityId: String!
     type: String!
     source: String!
     duration: Int!
@@ -79,12 +80,12 @@ const typeDefs = gql`
     avatarName: String!
     owner: String!
     seenReport: Boolean!
-    foeType: String!
+    foeType: String
     outcome: String!
     createdAt: String!
     updatedAt: String!
     aStatus: String!
-    xpGain: Int!
+    xpGain: Int
     ptGain: Int
     scenario: Int!
     effects: [String!]
@@ -226,16 +227,59 @@ const typeDefs = gql`
     healingFactor: Float!
   }
 
-
-  type Query {
-    profile(id: Int!): Profile!
+  type User {
+    id: ID!
+    username: String!
+    email: String!
+    stravaAccessToken: String
+    stravaAccessTokenExpiration: String
+    stravaRefreshToken: String
+    createdAtupdatedAt: String!
+    latestActivityUpdate: String
+    featurePreferenceSubmitted: Boolean!
+    firstName: String
+    lastName: String
+    seenLatestPatch: Boolean!
+    isFake: Boolean!
+    active: Boolean! 
+    hash: String
+    salt: String
+    emailCode: String
+    dataSrcId: String
+    emailMarketingOptIn: Boolean!
+    foundOutBy: String
+    isMetric: Boolean!
+    referredBy: String
   }
 
-  "Profile Page"
-  type Profile {
-    hero: Hero!
+  type UserTotal {
+    id: ID!
+    avatarId: Int!
+    user: String!
+    lastUpdate: String!
+    workout: UserActivityTotal
+    rowing: UserActivityTotal
+    standUpPaddling: UserActivityTotal
+    crossfit: UserActivityTotal
+    elliptical: UserActivityTotal
+    stairStepper: UserActivityTotal
+    weightTraining: UserActivityTotal
+    yoga: UserActivityTotal
+    swim: UserActivityTotal
+    walk: UserActivityTotal
+    hike: UserActivityTotal
+    run: UserActivityTotal
+    ride: UserActivityTotal
+    ski: UserActivityTotal
+    snowboard: UserActivityTotal
+    snowshoe: UserActivityTotal
+    kayaking: UserActivityTotal
   }
 
+  type UserActivityTotal {
+    duration: Int!
+    instance: Int!
+  }
 `;
 
 export default typeDefs;
