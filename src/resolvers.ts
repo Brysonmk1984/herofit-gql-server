@@ -1,4 +1,5 @@
 import { Context } from "./context";
+import { stackItemInstances } from "./lib/helperFunctions";
 
 //use Prisma Client in your resolvers to read and write data in the database based on incoming queries and mutations.
 const resolvers = {
@@ -7,10 +8,14 @@ const resolvers = {
 
   Query: {
     // Get a single profile by ID for the profile page
-    userProfile: (_ : {}, { email : owner } : { email : string }, { prisma } : Context) => {
-      return prisma.avatars.findUnique({ where: { owner } });
+    userProfile: async (_ : {}, { email : owner } : { email : string }, { prisma } : Context) => {
+      const hero = await prisma.avatars.findUnique({ where: { owner }, include : { avatarItems : true } });
+      // for item instances, stack consumables
+      if(hero){
+        hero.avatarItems = stackItemInstances(hero.avatarItems);
+      }
+      return hero;
     }
-
   },
 
   // Only fetch userprofile for current user, need separate resolver to handle fetching others profile
@@ -26,6 +31,7 @@ const resolvers = {
       });
     },
     userTotals: (_ : any, { email : user } : any, { prisma } : Context  ) => {
+      // Can't use findUnique since I never set this field as unique in DB
       return prisma.userTotals.findFirst({
         where: { user }
       });

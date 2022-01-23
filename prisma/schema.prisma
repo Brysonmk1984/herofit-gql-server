@@ -157,6 +157,8 @@ model userTotals {
   kayaking        Json?
   users           users    @relation(fields: [user], references: [email], onDelete: Cascade)
 
+  // Can't figure out how to make unique
+  //@@unique(["user"]);
   @@map("user_totals")
 }
 

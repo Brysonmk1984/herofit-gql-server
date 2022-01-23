@@ -12,6 +12,18 @@ const typeDefs = gql`
     latestBattles(email: String!): [Battle]!
     userTotals(email: String!): UserTotal
     user(email: String!): User
+    avatarItems: [AvatarItemInstance!]
+  }
+
+  "Instances of items that Heroes own. Used on Profile page"
+  type AvatarItemInstance {
+    id: ID!
+    itemID: Int!
+    avatarID: Int!
+    createdAt: String!
+    updatedAt: String!
+    equipped: Boolean!
+    count: Int
   }
 
   "A Hero complete with currently equipped items"
