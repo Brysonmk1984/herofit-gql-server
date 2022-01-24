@@ -14,4 +14,13 @@ function stackItemInstances(allItems: any[]) {
   return stackedItems;
 }
 
-export { stackItemInstances };
+function mergeItemDefaultsWithInstances(itemInstances: any[]) : any[]{
+  
+  return itemInstances.map(itemInstance => {
+    const itemDefaults = {...itemInstance.items};
+    delete itemInstance.items;
+    return {...itemInstance, ...itemDefaults}
+  });
+}
+
+export { stackItemInstances, mergeItemDefaultsWithInstances };

@@ -13,10 +13,11 @@ const typeDefs = gql`
     userTotals(email: String!): UserTotal
     user(email: String!): User
     avatarItems: [AvatarItemInstance!]
+    items: [DefaultItem!]!
   }
 
   "Instances of items that Heroes own. Used on Profile page"
-  type AvatarItemInstance {
+  interface AvatarItemInstanceProperties {
     id: ID!
     itemID: Int!
     avatarID: Int!
@@ -25,6 +26,84 @@ const typeDefs = gql`
     equipped: Boolean!
     count: Int
   }
+
+  interface DefaultItemProperties {
+    id: ID!
+    type: String!
+    name: String!
+    description: String!
+    lore: String
+    icon: String
+    class: String
+    exhaustible: Boolean!
+    ptCost: Int
+    msCost: Int
+    createdAt: String!
+    updatedAt: String!
+    action: String
+    effects: [ItemEffect!]
+    disabled: Boolean!
+    dropRate: Float
+    levelRestriction: Int
+    activityRestriction: [String!]
+  }
+
+  type AvatarItemInstance implements AvatarItemInstanceProperties {
+    id: ID!
+    itemID: Int!
+    avatarID: Int!
+    createdAt: String!
+    updatedAt: String!
+    equipped: Boolean!
+    count: Int
+  }
+  type DefaultItem implements DefaultItemProperties {
+    id: ID!
+    type: String!
+    name: String!
+    description: String!
+    lore: String
+    icon: String
+    class: String
+    exhaustible: Boolean!
+    ptCost: Int
+    msCost: Int
+    createdAt: String!
+    updatedAt: String!
+    action: String
+    effects: [ItemEffect!]
+    disabled: Boolean!
+    dropRate: Float
+    levelRestriction: Int
+    activityRestriction: [String!]
+  }
+
+  "Combined type of the two above"
+  type CombinedItem implements AvatarItemInstanceProperties & DefaultItemProperties {
+    id: ID!
+    type: String!
+    name: String!
+    description: String!
+    lore: String
+    icon: String
+    class: String
+    exhaustible: Boolean!
+    ptCost: Int
+    msCost: Int
+    action: String
+    effects: [ItemEffect!]
+    disabled: Boolean!
+    dropRate: Float
+    levelRestriction: Int
+    activityRestriction: [String!]
+    itemID: Int!
+    avatarID: Int!
+    createdAt: String!
+    updatedAt: String!
+    equipped: Boolean!
+    count: Int
+  }
+
 
   "A Hero complete with currently equipped items"
   type Hero {
@@ -66,6 +145,7 @@ const typeDefs = gql`
     qpAether: Int!
     qpArmor: Int!
     qpRecovery: Int!
+    avatarItems: [CombinedItem!]
   }
 
   "An Exercise Activity in which a user has completed"

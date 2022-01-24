@@ -1,5 +1,5 @@
 import { Context } from "./context";
-import { stackItemInstances } from "./lib/helperFunctions";
+import { stackItemInstances, mergeItemDefaultsWithInstances } from "./lib/helperFunctions";
 
 //use Prisma Client in your resolvers to read and write data in the database based on incoming queries and mutations.
 const resolvers = {
@@ -9,10 +9,24 @@ const resolvers = {
   Query: {
     // Get a single profile by ID for the profile page
     userProfile: async (_ : {}, { email : owner } : { email : string }, { prisma } : Context) => {
-      const hero = await prisma.avatars.findUnique({ where: { owner }, include : { avatarItems : true } });
+      const hero = await prisma.avatars.findUnique({
+        where: { owner },
+        include : { 
+          avatarItems : {
+            include : {
+              items : true
+            }
+          }
+        } 
+      });
+
       // for item instances, stack consumables
+      // Then merge item default into item instance
       if(hero){
-        hero.avatarItems = stackItemInstances(hero.avatarItems);
+        const stackedItems = stackItemInstances(hero.avatarItems);
+        const mergedItems = mergeItemDefaultsWithInstances(stackedItems);
+        hero.avatarItems = mergedItems;
+        console.log(hero);
       }
       return hero;
     }
@@ -52,6 +66,15 @@ const resolvers = {
         orderBy: {
           createdAt: 'desc'
         }
+      });
+    },
+    // Get default game items
+    // Parent in the userProfile query is pointing to the avatarItems included on the hero
+    items: (parent:any, args : any, { prisma } : Context) => {
+      const avatarItems = parent.avatarItems.map((i : any) => i.itemID);
+
+      return prisma.items.findMany({
+        where : { id : { in : avatarItems } }
       });
     }
   },
