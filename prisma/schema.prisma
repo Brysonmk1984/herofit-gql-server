@@ -14,7 +14,7 @@ model avatarItems {
   createdAt DateTime  @default(now()) @db.Timestamptz(6)
   id        Int       @id @default(autoincrement())
   updatedAt DateTime? @db.Timestamptz(6)
-  avatars   avatars   @relation(fields: [avatarID], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "avatar_avatar_items_fkey")
+  avatar    avatars   @relation(fields: [avatarID], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "avatar_avatar_items_fkey")
   items     items     @relation(fields: [itemID], references: [id], onDelete: Cascade, map: "items_avatar_items_fkey")
 
   @@map("avatar_items")
@@ -90,6 +90,8 @@ model battles {
   effectProcs                       Json?
   avatars_avatarsTobattles_avatarID avatars  @relation("avatarsTobattles_avatarID", fields: [avatarID], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Avatars_id_fk")
   avatars_avatarsTobattles_owner    avatars  @relation("avatarsTobattles_owner", fields: [owner], references: [owner], onDelete: NoAction, onUpdate: NoAction, map: "Avatars_owner_fk")
+  users                             users?   @relation(fields: [owner], references: [email])
+  usersId                           Int?
 }
 
 model items {
@@ -135,7 +137,7 @@ model userActivities {
 
 model userTotals {
   id              Int      @id(map: "UserActivities_pkey") @default(autoincrement())
-  user            String   @db.VarChar(100)
+  user            String   @unique @db.VarChar(100)
   avatarId        Int?
   lastUpdate      DateTime @db.Timestamptz(6)
   workout         Json?
@@ -157,8 +159,6 @@ model userTotals {
   kayaking        Json?
   users           users    @relation(fields: [user], references: [email], onDelete: Cascade)
 
-  // Can't figure out how to make unique
-  //@@unique(["user"]);
   @@map("user_totals")
 }
 
@@ -188,5 +188,6 @@ model users {
   referredBy                  String?          @db.VarChar(50)
   avatars                     avatars?
   userActivities              userActivities[]
-  userTotals                  userTotals[]
+  userBattles                 battles[]
+  userTotals                  userTotals?
 }

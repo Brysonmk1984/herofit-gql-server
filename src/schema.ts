@@ -2,18 +2,11 @@ import { gql } from 'apollo-server';
 const typeDefs = gql`
   "Entry point into the rest of the Schema, fetch all needed data from here, think multiple endpoints"
   type Query {
-    userProfile(email: String!): UserProfile!
-  }
-
-  "Profile Page"
-  type UserProfile {
     hero(email: String!): Hero!
+    user(email: String!): User!
     latestActivities(email: String!): [Activity]!
     latestBattles(email: String!): [Battle]!
     userTotals(email: String!): UserTotal
-    user(email: String!): User
-    avatarItems: [AvatarItemInstance!]
-    items: [DefaultItem!]!
   }
 
   "Instances of items that Heroes own. Used on Profile page"
@@ -158,11 +151,11 @@ const typeDefs = gql`
     activityId: String!
     type: String!
     source: String!
-    duration: Int!
-    distance: Int
-    averageSpeed: Int
-    maxSpeed: Int
-    elevationGain: Int
+    duration: Float!
+    distance: Float
+    averageSpeed: Float
+    maxSpeed: Float
+    elevationGain: Float
   }
 
   "A Battle in which a Hero has been in"
@@ -198,7 +191,7 @@ const typeDefs = gql`
 
   "Hero that gets queued for a battle, and BRA"
   type BattleHero{
-    id: Int!
+    id: ID!
     owner: String!
     name: String!
     character: String!
@@ -226,7 +219,7 @@ const typeDefs = gql`
 
   "The Equipped item on a hero"
   type EquippedOnHero {
-    id: Int!
+    id: ID!
     name: String!
     type: String!
     action: String!
@@ -342,13 +335,16 @@ const typeDefs = gql`
     foundOutBy: String
     isMetric: Boolean!
     referredBy: String
+    userTotals: UserTotal!
+    userActivities: [Activity!]
+    userBattles: [Battle!]
   }
 
   type UserTotal {
     id: ID!
     avatarId: Int!
     user: String!
-    lastUpdate: String!
+    lastUpdate: String
     workout: UserActivityTotal
     rowing: UserActivityTotal
     standUpPaddling: UserActivityTotal
